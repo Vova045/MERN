@@ -18,9 +18,12 @@ const userSchema = mongoose.Schema({
 }, {
     timestamps: true
 });
+userSchema.methods.mathPassword = async function (enteredPassword){
+    return await bcrypt.compare(enteredPassword, this.password);
+}
 
 userSchema.pre('save', async function (next){
-    if (!this, isModified('password')) {
+    if (!this.isModified('password')) {
         next()
     }
 
@@ -28,9 +31,6 @@ userSchema.pre('save', async function (next){
     this.password = await bcrypt.hash(this.password, salt);
 })
 
-userSchema.methods.mathPassword = async function (enteredPassword){
-    return await bcrypt.compare(enteredPassword, this.password());
-}
 
 const User = mongoose.model('User', userSchema);
 
